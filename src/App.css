@@ -1,0 +1,100 @@
+@font-face {
+  font-family: 'PixelFont';
+  src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+}
+
+#root {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 1px;
+}
+
+.pixel-text {
+  font-family: 'Press Start 2P', monospace;
+  text-shadow: 3px 3px 0 #333;
+  letter-spacing: 2px;
+}
+
+.pixel {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin: 2px;
+  transition: opacity 0.2s;
+  image-rendering: pixelated;
+}
+
+.pixel-on {
+  background-color: white;
+  box-shadow: 0 0 4px #fff;
+}
+
+.pixel-off {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.pixel-hit {
+  background-color: #4ade80;
+  animation: pulse 0.5s;
+}
+
+.game-board {
+  background-color: #000;
+  border: 2px solid rgb(88, 198, 239);
+  position: relative;
+  overflow: hidden;
+  image-rendering: pixelated;
+}
+
+.paddle {
+  position: absolute;
+  bottom: 10px;
+  width: 100px;
+  height: 12px;
+  background-color: white;
+  border-radius: 0;
+  box-shadow: 0 0 8px #fff;
+}
+
+.ball {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: #f43f5e;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #f43f5e;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.game-over-screen, .game-won-screen {
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px dashed white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.instructions {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+/* More pixelated styling */
+button, .badge, .card {
+  border-radius: 0 !important;
+}
+
+h1, h2, h3, p {
+  image-rendering: pixelated;
+}
