@@ -401,7 +401,8 @@ function App() {
         }
         
         // Game over if ball goes below paddle
-        if (newY + ballSize > boardSize.height) {
+        
+        if (!gameWon && newY + ballSize > boardSize.height) {
           cancelAnimationFrame(requestRef.current);
           setGameOver(true);
           setGameStarted(false);
@@ -462,9 +463,11 @@ function App() {
             
             // If player reaches 50 points, they win the game
             if (score + 10 >= 50) {
+              setTimeout(() => {
               setGameWon(true);
               setGameStarted(false);
               cancelAnimationFrame(requestRef.current);
+            }, 0);
               return prevPos;
             }
           }
@@ -489,7 +492,8 @@ function App() {
     gameStarted,
     gamePaused,
     score,
-    ballSpeed
+    ballSpeed,
+    gameWon
   ]);
 
   const getRandomWord = () => {
@@ -513,7 +517,7 @@ function App() {
   };
 
   const exitGame = () => {
-    // Cancel animation frame
+     // Cancel animation frame
     cancelAnimationFrame(requestRef.current);
     
     // Reset game state
@@ -525,8 +529,11 @@ function App() {
     setCurrentWord('');
     setPixels([]);
     setShowInstructions(true); // Show instructions again if needed
-    // Don't reset score so player can see their final score
-  };
+    //Don't reset score so player can see their final score
+     
+    };
+   
+  
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
