@@ -31,9 +31,9 @@ function App() {
   const boardRef = useRef(null);
   const requestRef = useRef();
   const paddleWidth = 100;
-  const ballSize = 12; // Smaller ball for more pixelated look
-  const pixelSize = 16; // Smaller pixels for more pixelated look
-  const pixelGap = 4; // Larger gap for more pixelated look
+  const ballSize = 12; 
+  const pixelSize = 16; 
+  const pixelGap = 4; 
 
   useEffect(() => {
     // Load high score from localStorage
@@ -58,34 +58,36 @@ function App() {
   // Initialize the game board
   useEffect(() => {
     if (!currentWord || !gameStarted) return;
-    
+  
     const updateBoardSize = () => {
       if (boardRef.current) {
         const { width, height } = boardRef.current.getBoundingClientRect();
         setBoardSize({ width, height });
-        
+  
         // Reset ball position
         setBallPosition({
           x: width / 2 - ballSize / 2,
           y: height / 2 + 50
         });
-        
-        // Reset paddle position
-        setPaddlePosition(width / 2 - paddleWidth / 2);
-        
+  
+        // Ensure paddleWidth is defined
+        if (paddleWidth) {
+          setPaddlePosition(width / 2 - paddleWidth / 2);
+        }
+  
         // Generate pixels for the word
         generatePixelsForWord(currentWord, width);
       }
     };
-    
+  
     updateBoardSize();
     window.addEventListener('resize', updateBoardSize);
-    
+  
     return () => {
       window.removeEventListener('resize', updateBoardSize);
       cancelAnimationFrame(requestRef.current);
     };
-  }, [currentWord, gameStarted]);
+  }, [currentWord, gameStarted, paddleWidth]); 
 
   // Handle keyboard events for pause and exit
   useEffect(() => {
@@ -102,7 +104,53 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameStarted, gamePaused]);
-
+  
+  const handleMouseMove = (e) => {
+    if (boardRef.current) {
+      const boardRect = boardRef.current.getBoundingClientRect();
+      let newPosition = e.clientX - boardRect.left - paddleWidth / 2;
+      newPosition = Math.max(0, Math.min(newPosition, boardSize.width - paddleWidth));
+      setPaddlePosition(newPosition);
+    }
+  };
+  
+  const handleTouchMove = (e) => {
+    if (boardRef.current) {
+      const boardRect = boardRef.current.getBoundingClientRect();
+      let touchX = e.touches[0].clientX - boardRect.left;
+      let newPosition = touchX - paddleWidth / 2;
+      newPosition = Math.max(0, Math.min(newPosition, boardSize.width - paddleWidth));
+      setPaddlePosition(newPosition);
+    }
+  };
+  
+  useEffect(() => {
+    if (!gameStarted || gamePaused) return;
+  
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove);
+  
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [boardSize.width, paddleWidth, gameStarted, gamePaused]);
+  
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      if (boardRef.current) {
+        const { width } = boardRef.current.getBoundingClientRect();
+        setPaddlePosition(width / 2 - paddleWidth / 2);
+      }
+    };
+  
+    window.addEventListener("orientationchange", handleOrientationChange);
+  
+    return () => {
+      window.removeEventListener("orientationchange", handleOrientationChange);
+    };
+  }, []);
+  
   // Generate pixels for the word
   const generatePixelsForWord = (word, boardWidth) => {
     const pixelMap = [];
@@ -532,8 +580,6 @@ function App() {
     //Don't reset score so player can see their final score
      
     };
-   
-  
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
@@ -541,7 +587,7 @@ function App() {
       
       <div className="w-full max-w-3xl ">
         <Card className="bg-white border-gray-700 mb-2">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 gap-3">
             <CardTitle className="text-xl font-pixel">SCOREBOARD</CardTitle>
             <div className="flex gap-4">
               <Badge variant="outline" className="text-lg px-3 py-1 font-pixel bg-black text-white">
@@ -576,14 +622,14 @@ function App() {
               <div className="flex items-start gap-3">
                 <div className="h-6 w-6 text-blue-400 mt-1 flex-shrink-0">🖱️</div>
                 <p className="instructions text-black">
-                  Move your mouse left and right to control the paddle at the bottom of the screen.
+                 Move your mouse left and right to control the paddle at the bottom of the screen.
                 </p>
               </div>
               
               <div className="flex items-start gap-3">
                 <div className="h-6 w-6 text-blue-400 mt-1 flex-shrink-0">🎯</div>
                 <p className="instructions text-black">
-                  Hit all the pixels of the word with the ball to complete the word and earn bonus points.
+                 Hit all the pixels of the word with the ball to complete the word and earn bonus points.
                 </p>
               </div>
               
@@ -605,6 +651,13 @@ function App() {
                 <div className="h-6 w-6 text-purple-400 mt-1 flex-shrink-0">⏯️</div>
                 <p className="instructions text-black">
                   Press 'P' key to pause/resume the game. Press 'ESC' key to exit the game.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 text-red-400 mt-1 flex-shrink-0">🔄</div>
+                <p className="instructions text-black">
+                  Rotate to landscape view in mobile devices.
                 </p>
               </div>
               
@@ -760,7 +813,6 @@ function App() {
           </div>
         )}
       </div>
-      {/* Toaster component moved outside of the render flow to avoid React warning */}
       <Toaster />
     </div>
   );

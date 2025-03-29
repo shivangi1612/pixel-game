@@ -2,6 +2,10 @@
   font-family: 'PixelFont';
   src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 }
+html, body {
+  scroll-behavior: smooth;
+  overflow-y: auto;
+}
 
 #root {
   width: 100%;
@@ -97,4 +101,43 @@ button, .badge, .card {
 
 h1, h2, h3, p {
   image-rendering: pixelated;
+}
+
+@media (max-width: 480px) {
+   .pixel-text {
+    font-size: 1.2rem;
+  }
+
+  .instructions {
+    font-size: 0.7rem;
+  }
+
+  .game-over-screen, .game-won-screen {
+    padding: 1rem; 
+    border: none;
+  }
+}
+@media screen and (orientation: landscape) {
+  .game-board {
+    height: 200px;
+    scroll-margin-top: 100vh; 
+  }
+
+  body:has(.game-board) {
+    scroll-snap-type: y mandatory;
+  }
+
+  .paddle {
+    width: 15vw;
+  }
+
+  .ball {
+    width: 8px;
+    height: 8px;
+  } 
+
+  .game-over-screen, .game-won-screen {
+    padding: 1rem; 
+    border: none;
+  }
 }
